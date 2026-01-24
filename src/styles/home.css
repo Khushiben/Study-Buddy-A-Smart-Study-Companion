@@ -1,11 +1,12 @@
 /* Base styling similar to dashboard.css */
-body {
+#root {
     margin: 0;
     font-family: "Segoe UI", sans-serif;
     background: linear-gradient(135deg, #f3f4f6, #e0f2fe);
     color: #333;
     overflow-x: hidden;
     position: relative;
+    min-height: 100vh;
 }
 
 .home-container {

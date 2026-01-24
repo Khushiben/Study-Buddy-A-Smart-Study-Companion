@@ -26,7 +26,9 @@ function Login() {
 
       if (res.ok && data.success) {
         // later: store JWT / user context here
-        window.location.href = "/dashboard";
+       localStorage.setItem("token", data.token);
+      window.location.href = "/dashboard";
+
       } else {
         setError(data.message || "❌ Invalid email or password!");
       }
