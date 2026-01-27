@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import "../styles/Login.css"; //REUSE Login CSS for Signup
-
+import "../styles/Login.css"; // REUSE Login CSS for Signup
 
 function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -68,13 +68,32 @@ function Signup() {
             required
           />
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          {/* 🔥 Password with Eye Toggle */}
+          <div className="password-wrapper">
+ <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{ paddingRight: "40px" }}
+            />
+
+            <span
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: "absolute",
+                right: "12px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                cursor: "pointer",
+                fontSize: "18px",
+                userSelect: "none",
+              }}
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </span>
+          </div>
 
           <button type="submit" disabled={loading}>
             {loading ? "Creating Account..." : "Sign Up"}

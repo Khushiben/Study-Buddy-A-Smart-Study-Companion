@@ -52,13 +52,19 @@
 }
 
 .auth-container input {
+    width: 100%;               /* ✅ ADD THIS */
+    height: 48px;
     padding: 14px;
     margin: 10px 0;
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 16px;
+    box-sizing: border-box;
 }
-
+.password-wrapper {
+    width: 100%;
+    position: relative;
+}
 .auth-container input:focus {
     border-color: #2563eb;
     box-shadow: 0 0 8px rgba(37, 99, 235, 0.5);
