@@ -1,0 +1,44 @@
+/* Modal background */
+.modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  overflow: auto;
+}
+
+/* Modal popup content */
+.modal-content {
+  background-color: #fefefe;
+  padding: 20px;
+  border-radius: 8px;
+  width: 50%;
+  max-width: 600px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Close button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: black;
+}
+
+/* Modal animation */
+@keyframes slideDown {
+  from { transform: translateY(-50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

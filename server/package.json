@@ -1,0 +1,37 @@
+{
+  "name": "study-buddy-server",
+  "version": "1.0.0",
+  "description": "Backend server for Study Buddy smart study companion",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Khushiben/Study-Buddy-A-Smart-Study-Companion.git"
+  },
+  "keywords": [
+    "study",
+    "education",
+    "learning",
+    "smart-study",
+    "companion"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Khushiben/Study-Buddy-A-Smart-Study-Companion/issues"
+  },
+  "homepage": "https://github.com/Khushiben/Study-Buddy-A-Smart-Study-Companion#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.1.5",
+    "mysql": "^2.18.1"
+  }
+}
