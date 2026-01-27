@@ -16,7 +16,9 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch(err => console.log(err));
 
+// 🔐 ROUTES
 app.use("/api/auth", require("./routes/auth"));
+app.use("/api", require("./routes/user"));   // ✅ ADD THIS LINE
 
 app.listen(5000, () => {
   console.log("🚀 Server running on port 5000");

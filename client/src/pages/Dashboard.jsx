@@ -21,7 +21,7 @@ const Dashboard = () => {
       headers: { Authorization: `Bearer ${token}` },
       withCredentials: true,
     })
-    .then((res) => setUsername(res.data.username))
+    .then((res) => setUsername(res.data.name))
     .catch(() => setUsername("User"));
   }, [token]);
 
