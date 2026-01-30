@@ -48,7 +48,7 @@ function ForgotPassword() {
         {/* Show clickable reset link for demo/testing */}
         {resetLink && (
           <p style={{ wordBreak: "break-word", overflowWrap: "anywhere" }}>
-            🔗 Demo Reset Link: <a href={resetLink} style={{ wordBreak: "break-word", overflowWrap: "anywhere" }}>{resetLink}</a>
+             <a href={resetLink} style={{ wordBreak: "break-word", overflowWrap: "anywhere" }}>{resetLink}</a>
           </p>
         )}
 

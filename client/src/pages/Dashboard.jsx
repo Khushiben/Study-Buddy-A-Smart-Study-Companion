@@ -5,6 +5,10 @@ import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import Modal from "../components/Modal";
 import "../styles/Dashboard.css";
+import Marquee from "../components/Marquee";
+
+
+
 
 const Dashboard = () => {
   const [username, setUsername] = useState("");
@@ -51,9 +55,10 @@ const Dashboard = () => {
       <Sidebar activePage="Dashboard" />
 
       <main className="main">
-        <marquee behavior="scroll" direction="left" scrollamount="10">
+        {/*<marquee behavior="scroll" direction="left" scrollamount="10">
           <h2>Welcome, {username} 👋</h2>
-        </marquee>
+        </marquee>*/}
+        <Marquee title="Welcome" username={username} />
 
         <div className="cards">
           <div className="card">

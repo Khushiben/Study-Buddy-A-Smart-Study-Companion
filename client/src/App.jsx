@@ -7,6 +7,8 @@ import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword"; // <-- added
+import Tasks from "./pages/Tasks";
+
 
 function App() {
   return (
@@ -16,7 +18,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} /> {/* <-- added */}
+        <Route path="/reset-password/:token" element={<ResetPassword />} /> 
+        <Route path="/tasks" element={<Tasks />} />
 
         {/* 🔐 PROTECTED DASHBOARD */}
         <Route

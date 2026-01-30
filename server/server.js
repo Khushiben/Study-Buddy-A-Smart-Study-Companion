@@ -19,7 +19,8 @@ mongoose.connect(process.env.MONGO_URI)
 // 🔐 ROUTES
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api", require("./routes/user"));   // ✅ user + /user route
-
+app.use("/api/tasks", require("./routes/tasks")); // ✅ tasks route
 app.listen(5000, () => {
   console.log("🚀 Server running on port 5000");
 });
+

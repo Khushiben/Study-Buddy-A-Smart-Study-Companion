@@ -44,12 +44,12 @@ router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({ success: false, message: "Invalid credentials" });
+      return res.json({ success: false, message: "Invalid email or password" });
     }
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      return res.json({ success: false, message: "Invalid credentials" });
+      return res.json({ success: false, message: "Invalid email or password" });
     }
 
     const token = jwt.sign(
