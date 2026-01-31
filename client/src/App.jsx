@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword"; // <-- added
 import Tasks from "./pages/Tasks";
+import Flashcards from "./pages/Flashcards";
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} /> 
         <Route path="/tasks" element={<Tasks />} />
+        <Route path="/flashcards" element={<Flashcards />} />
 
         {/* 🔐 PROTECTED DASHBOARD */}
         <Route

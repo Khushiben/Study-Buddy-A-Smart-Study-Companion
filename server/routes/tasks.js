@@ -4,7 +4,6 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-
 // ✅ GET all tasks for logged-in user
 router.get("/", authMiddleware, async (req, res) => {
   try {
@@ -15,8 +14,7 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
-
-// ✅ ADD new task (stored in MongoDB with userId)
+// ✅ ADD new task
 router.post("/", authMiddleware, async (req, res) => {
   const { title, description } = req.body;
 
@@ -28,7 +26,8 @@ router.post("/", authMiddleware, async (req, res) => {
     const newTask = await Task.create({
       title,
       description,
-      user: req.userId
+      user: req.userId,
+      status: "pending"
     });
 
     res.json({
@@ -37,6 +36,35 @@ router.post("/", authMiddleware, async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ message: "Failed to add task" });
+  }
+});
+
+// ✅ MARK TASK AS COMPLETED
+router.put("/:id", authMiddleware, async (req, res) => {
+  try {
+    const task = await Task.findOneAndUpdate(
+      { _id: req.params.id, user: req.userId },
+      { status: "completed" },
+      { new: true }
+    );
+
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    res.json(task);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to mark task as completed" });
+  }
+});
+
+// ✅ DELETE ALL TASKS FOR LOGGED-IN USER
+router.delete("/", authMiddleware, async (req, res) => {
+  try {
+    await Task.deleteMany({ user: req.userId });
+    res.json({ message: "All tasks deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to delete tasks" });
   }
 });
 

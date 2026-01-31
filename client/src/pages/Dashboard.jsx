@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import Modal from "../components/Modal";
 import "../styles/Dashboard.css";
 import Marquee from "../components/Marquee";
-
-
-
 
 const Dashboard = () => {
   const [username, setUsername] = useState("");
@@ -19,35 +17,41 @@ const Dashboard = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/user", {
-      headers: { Authorization: `Bearer ${token}` },
-      withCredentials: true,
-    })
-    .then((res) => setUsername(res.data.name))
-    .catch(() => setUsername("User"));
+    axios
+      .get("http://localhost:5000/api/user", {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+      })
+      .then((res) => setUsername(res.data.name))
+      .catch(() => setUsername("User"));
   }, [token]);
 
   const handleTaskSubmit = (e) => {
     e.preventDefault();
     if (!taskTitle.trim()) return alert("⚠️ Please enter a task title!");
 
-    axios.post(
-      "http://localhost:5000/api/tasks",
-      { title: taskTitle, description: taskDesc },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
-    .then((res) => {
-      setSuccess(res.data.message);
-      setError("");
-      setTaskTitle("");
-      setTaskDesc("");
-    })
-    .catch((err) => {
-      setError(err.response?.data?.error || "❌ Failed to add task.");
-      setSuccess("");
-    });
+    axios
+      .post(
+        "http://localhost:5000/api/tasks",
+        { title: taskTitle, description: taskDesc },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      .then((res) => {
+        setSuccess(res.data.message);
+        setError("");
+        setTaskTitle("");
+        setTaskDesc("");
+        alert("✅ Task added successfully!");
+        // ✅ Redirect to Tasks page
+        navigate("/tasks");
+      })
+      .catch((err) => {
+        setError(err.response?.data?.error || "❌ Failed to add task.");
+        setSuccess("");
+      });
   };
 
   return (
@@ -55,9 +59,6 @@ const Dashboard = () => {
       <Sidebar activePage="Dashboard" />
 
       <main className="main">
-        {/*<marquee behavior="scroll" direction="left" scrollamount="10">
-          <h2>Welcome, {username} 👋</h2>
-        </marquee>*/}
         <Marquee title="Welcome" username={username} />
 
         <div className="cards">
@@ -90,15 +91,20 @@ const Dashboard = () => {
           <div className="card">
             <h3>📚 Flashcards</h3>
             <p>Make flashcards to help with last minute revision</p>
-            <button onClick={() => window.location.href="/flashcards"}>Go to Flashcards</button>
+            <button onClick={() => window.location.href = "/flashcards"}>
+              Go to Flashcards
+            </button>
           </div>
 
           <div className="card">
             <h3>📂 Upload Notes</h3>
             <p>Upload your notes and view them on the Notes page.</p>
-            <button onClick={() => window.location.href="/notes"}>Go to Notes</button>
+            <button onClick={() => window.location.href = "/notes"}>
+              Go to Notes
+            </button>
           </div>
         </div>
+
         <Footer />
       </main>
 
@@ -109,16 +115,14 @@ const Dashboard = () => {
           <li>Start working on a task and track time using timers.</li>
           <li>Generate flashcards to aid studying.</li>
           <li>Upload your notes for reference.</li>
-          <li>Use the <strong>Study Circle</strong> feature to connect and study with peers.</li>
+          <li>
+            Use the <strong>Study Circle</strong> feature to connect and study with peers.
+          </li>
           <li>Review completed tasks and stay productive!</li>
         </ol>
       </Modal>
-
-      
     </div>
-    
   );
-  
 };
 
 export default Dashboard;

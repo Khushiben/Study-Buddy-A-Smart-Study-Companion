@@ -41,3 +41,58 @@
   color: green;
   margin-top: 10px;
 }
+.timer-box {
+  background: #f8f9fa;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.timer-buttons button {
+  margin: 5px;
+}
+
+.completed {
+  color: green;
+  font-weight: bold;
+}
+.timer-buttons-inline {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.timer-input {
+  width: 160px;
+  padding: 6px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.complete-btn.inline {
+  margin-top: 10px;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete-history-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: red;
+  transition: transform 0.2s;
+}
+
+.delete-history-btn:hover {
+  transform: scale(1.2);
+}
+
+
+

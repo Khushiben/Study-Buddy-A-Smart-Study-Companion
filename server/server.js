@@ -5,22 +5,32 @@ require("dotenv").config();
 
 const app = express();
 
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}));
+// ✅ CORS config (unchanged)
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
+// ✅ JSON parsing
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI)
+// ✅ Connect MongoDB
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
-  .catch(err => console.log(err));
+  .catch((err) => console.log(err));
 
-// 🔐 ROUTES
+// 🔐 ROUTES (unchanged)
 app.use("/api/auth", require("./routes/auth"));
-app.use("/api", require("./routes/user"));   // ✅ user + /user route
-app.use("/api/tasks", require("./routes/tasks")); // ✅ tasks route
+app.use("/api", require("./routes/user")); // ✅ user + /user route
+app.use("/api/tasks", require("./routes/tasks")); // ✅ tasks route added
+
+// ✅ Flashcards route (JWT protected internally)
+app.use("/api/flashcards", require("./routes/flashcardsApi"));
+
+// ✅ Start server
 app.listen(5000, () => {
   console.log("🚀 Server running on port 5000");
 });
-
