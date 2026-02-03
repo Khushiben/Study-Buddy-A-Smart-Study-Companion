@@ -94,5 +94,57 @@
   transform: scale(1.2);
 }
 
+.timer-type {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.radio-card {
+  flex: 1;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: #fff;
+}
+
+.radio-card input {
+  display: none;
+}
+
+.radio-card span {
+  font-weight: 600;
+  display: block;
+  font-size: 15px;
+}
+
+.radio-card small {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.radio-card:hover {
+  border-color: #f97316;
+  background: #fff7ed;
+}
+
+.radio-card.active {
+  border-color: #f97316;
+  background: #fff7ed;
+  box-shadow: 0 6px 16px rgba(249, 115, 22, 0.15);
+}
+
+.radio-card.active span {
+  color: #f97316;
+}
+
+.radio-card:has(input:disabled) {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
 
 
