@@ -19,6 +19,9 @@ const Timer = ({
     defaultMinutes * 60
   );
 
+  const [isTaskCompleted, setIsTaskCompleted] = useState(false);
+  const [isTimerTypeLocked, setIsTimerTypeLocked] = useState(false);
+
   const hasCompletedRef = useRef(false);
   const hasStartedRef = useRef(false);
 
@@ -51,6 +54,7 @@ const Timer = ({
       setIsRunning(false);
 
       if (mode === "pomodoro") {
+        setIsTaskCompleted(true); // ✅ AUTO completion is valid
         onComplete && onComplete();
       } else {
         setMode("pomodoro");
@@ -64,12 +68,14 @@ const Timer = ({
 
   // ▶️ Start / Resume
   const startTimer = () => {
+    if (isTaskCompleted) return;
+
     if (!isRunning) {
       if (!hasStartedRef.current) {
         hasStartedRef.current = true;
+        setIsTimerTypeLocked(true);
         onStart && onStart();
 
-        // Initialize ONLY on first start
         setTime(WORK_MINUTES * 60);
         setPomodoroTime(WORK_MINUTES * 60);
         setRemainingPomodoroTime(WORK_MINUTES * 60);
@@ -81,6 +87,8 @@ const Timer = ({
   };
 
   const startBreak = () => {
+    if (isTaskCompleted) return;
+
     if (mode === "pomodoro") {
       setRemainingPomodoroTime(time);
     }
@@ -91,6 +99,8 @@ const Timer = ({
   };
 
   const returnToPomodoro = () => {
+    if (isTaskCompleted) return;
+
     hasCompletedRef.current = false;
     setMode("pomodoro");
     setTime(remainingPomodoroTime);
@@ -98,11 +108,20 @@ const Timer = ({
   };
 
   const resetTimer = () => {
+    if (isTaskCompleted) return;
+
     hasCompletedRef.current = false;
-    hasStartedRef.current = false; // allow fresh start
+    hasStartedRef.current = false;
+    setIsTimerTypeLocked(false);
     setIsRunning(false);
     setMode("pomodoro");
     setTime(WORK_MINUTES * 60);
+  };
+
+  // ❗ FIXED: Timer no longer assumes completion
+  const handleManualComplete = () => {
+    setIsRunning(false);
+    onManualComplete && onManualComplete(); // parent decides
   };
 
   const minutesDisplay = Math.floor(time / 60);
@@ -117,7 +136,7 @@ const Timer = ({
       type="radio"
       checked={timerType === "pomodoro"}
       onChange={() => setTimerType("pomodoro")}
-      disabled={isRunning}
+      disabled={isRunning || isTaskCompleted || isTimerTypeLocked}
     />
     <span>🍅 Pomodoro</span>
     <small>25 min work • 5 min break</small>
@@ -128,14 +147,13 @@ const Timer = ({
       type="radio"
       checked={timerType === "custom"}
       onChange={() => setTimerType("custom")}
-      disabled={isRunning}
+      disabled={isRunning || isTaskCompleted || isTimerTypeLocked}
     />
     <span>⚙️ Custom</span>
     <small>Set your own time</small>
   </label>
 </div>
 
-      {/* Custom inputs ONLY for custom mode */}
       {timerType === "custom" && (
         <>
           <input
@@ -144,7 +162,7 @@ const Timer = ({
             value={customWorkMinutes}
             onChange={(e) => setCustomWorkMinutes(e.target.value)}
             className="timer-input"
-            disabled={isRunning}
+            disabled={isRunning || isTaskCompleted || isTimerTypeLocked}
           />
 
           <input
@@ -153,42 +171,51 @@ const Timer = ({
             value={customBreakMinutes}
             onChange={(e) => setCustomBreakMinutes(e.target.value)}
             className="timer-input"
-            disabled={isRunning}
+            disabled={isRunning || isTaskCompleted || isTimerTypeLocked}
           />
         </>
       )}
+
       <h2>
         {minutesDisplay}:{secondsDisplay.toString().padStart(2, "0")}
       </h2>
 
       <div className="timer-buttons-inline">
         {!isRunning ? (
-          <button onClick={startTimer}>▶ Start</button>
+          <button onClick={startTimer} disabled={isTaskCompleted}>
+            ▶ Start
+          </button>
         ) : (
           <button onClick={() => setIsRunning(false)}>⏸ Pause</button>
         )}
 
-        <button onClick={resetTimer}>🔄 Reset</button>
+        <button onClick={resetTimer} disabled={isTaskCompleted}>
+          🔄 Reset
+        </button>
 
-        {mode === "pomodoro" && isRunning && (
+        {mode === "pomodoro" && isRunning && !isTaskCompleted && (
           <button onClick={startBreak}>☕ Take Break</button>
         )}
 
-        {mode === "break" && (
+        {mode === "break" && !isTaskCompleted && (
           <button onClick={returnToPomodoro}>
             ⏮ Return to Pomodoro
           </button>
         )}
 
-        {mode === "pomodoro" && onManualComplete && (
+        {mode === "pomodoro" && onManualComplete && !isTaskCompleted && (
           <button
             className="complete-btn inline"
-            onClick={onManualComplete}
+            onClick={handleManualComplete}
           >
             ✅ Mark Completed
           </button>
         )}
       </div>
+
+      {isTaskCompleted && (
+        <p className="timer-locked">✅ Task completed. Timer locked.</p>
+      )}
     </div>
   );
 };

@@ -13,12 +13,15 @@ const Tasks = () => {
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
 
+  // which timer UI is open
+  const [activeTimerTaskId, setActiveTimerTaskId] = useState(null);
+
+  // which task timer is running OR paused
+  const [runningTaskId, setRunningTaskId] = useState(null);
+
   const token = localStorage.getItem("token");
 
-  // ✅ prevents multiple completion calls per task
   const completedTasksRef = useRef(new Set());
-
-  // ✅ track if timer was started for each task
   const timerStartedRef = useRef({});
 
   useEffect(() => {
@@ -37,18 +40,14 @@ const Tasks = () => {
 
   const fetchTasks = async () => {
     const res = await fetch("http://localhost:5000/api/tasks", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
-
     const data = await res.json();
     setTasks(data);
   };
 
   const addTask = async (e) => {
     e.preventDefault();
-
     if (!taskTitle.trim()) {
       alert("⚠️ Task title cannot be empty");
       return;
@@ -67,12 +66,6 @@ const Tasks = () => {
         }),
       });
 
-      if (!res.ok) {
-        const err = await res.json();
-        alert(err.message || "Failed to add task");
-        return;
-      }
-
       const data = await res.json();
       setMessage(data.message);
       setTaskTitle("");
@@ -84,68 +77,103 @@ const Tasks = () => {
   };
 
   const markCompleted = async (taskId, title) => {
-    // ❌ Timer never started
     if (!timerStartedRef.current[taskId]) {
-      alert("⏱️ Please start the timer before marking the task as completed!");
+      alert("⏱️ Please start the timer first!");
       return;
     }
-
-    // ✅ already completed → do nothing
-    if (completedTasksRef.current.has(taskId)) return;
 
     const isConfirmed = window.confirm(
       `Are you sure you want to mark "${title}" as completed?`
     );
-
     if (!isConfirmed) return;
 
-    completedTasksRef.current.add(taskId);
-
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/tasks/${taskId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ status: "completed" }),
-        }
-      );
-
-      if (!res.ok) throw new Error();
+      await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: "completed" }),
+      });
 
       alert(`🎉 Task "${title}" completed!`);
+      setRunningTaskId(null);
+      setActiveTimerTaskId(null);
       fetchTasks();
     } catch {
-      completedTasksRef.current.delete(taskId);
-      alert("❌ Failed to mark task as completed");
+      alert("❌ Failed to complete task");
     }
   };
 
+  // 🔥 SMART DELETE LOGIC (ONLY CHANGE)
   const deleteAllTasks = async () => {
-    const isConfirmed = window.confirm(
-      "Are you sure you want to delete all tasks?"
+    if (tasks.length === 0) {
+      alert("No tasks to delete!");
+      return;
+    }
+
+    const completedTasks = tasks.filter(
+      (task) => task.status === "completed"
+    );
+    const pendingTasks = tasks.filter(
+      (task) => task.status !== "completed"
     );
 
-    if (!isConfirmed) return;
-
     try {
-      const res = await fetch("http://localhost:5000/api/tasks", {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      // ✅ All tasks completed → delete directly
+      if (pendingTasks.length === 0) {
+        const confirmDelete = window.confirm(
+          "🗑️ All tasks are completed.\nDo you want to delete all of them?"
+        );
+        if (!confirmDelete) return;
 
-      if (!res.ok) throw new Error();
+        await fetch("http://localhost:5000/api/tasks", {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } else {
+        // ⚠️ Mixed tasks
+        const deleteAll = window.confirm(
+          "⚠️ You have unfinished tasks.\n\n" +
+            "OK → Delete ALL tasks\n" +
+            "Cancel → Delete ONLY completed tasks"
+        );
 
-      alert("🗑️ All tasks deleted!");
+        if (deleteAll) {
+          await fetch("http://localhost:5000/api/tasks", {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+        } else {
+          await Promise.all(
+            completedTasks.map((task) =>
+              fetch(`http://localhost:5000/api/tasks/${task._id}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
+              })
+            )
+          );
+        }
+      }
+
+      setRunningTaskId(null);
+      setActiveTimerTaskId(null);
       fetchTasks();
     } catch {
       alert("❌ Failed to delete tasks");
     }
+  };
+
+  const handleTimerIconClick = (taskId) => {
+    if (runningTaskId && runningTaskId !== taskId) {
+      alert("⏳ Please complete the current task first!");
+      return;
+    }
+
+    setActiveTimerTaskId(
+      activeTimerTaskId === taskId ? null : taskId
+    );
   };
 
   return (
@@ -168,53 +196,75 @@ const Tasks = () => {
               </button>
             </div>
 
-            {tasks.length ? (
-              <ul className="task-list">
-                {tasks.map((task) => (
-                  <li key={task._id} className="task-item">
-                    <div className="task-row">
-                      <strong
-                        className={
-                          task.status === "completed" ? "completed" : ""
-                        }
-                      >
-                        {task.title}
-                      </strong>
+            <ul className="task-list">
+              {tasks.map((task) => (
+                <li key={task._id} className="task-item">
+                  <div className="task-row">
+                    <strong
+                      className={
+                        task.status === "completed" ? "completed" : ""
+                      }
+                    >
+                      {task.title}
+                    </strong>
 
-                      <span className="task-desc">
-                        {task.description || "No description"}
-                      </span>
+                    <span className="task-desc">
+                      :-{task.description || "No description"}
+                    </span>
 
-                      {task.status === "completed" ? (
-                        <span className="completed status">✔ Completed</span>
-                      ) : (
-                        <div className="task-timers">
-                          <Timer
-                            defaultMinutes={25}
-                            onStart={() => {
-                              timerStartedRef.current[task._id] = true;
-                            }}
-                            onComplete={() =>
-                              markCompleted(task._id, task.title)
-                            }
-                            onManualComplete={() =>
-                              markCompleted(task._id, task.title)
-                            }
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
+                    {task.status === "completed" ? (
+                      <span className="completed status">✔ Completed</span>
+                    ) : (
+                      <>
+                        <button
+                          className={`timer-toggle-btn ${
+                            runningTaskId &&
+                            runningTaskId !== task._id
+                              ? "disabled"
+                              : ""
+                          }`}
+                          onClick={() =>
+                            handleTimerIconClick(task._id)
+                          }
+                        >
+                          ⏱️
+                        </button>
+
+                        {activeTimerTaskId === task._id && (
+                          <div className="task-timers">
+                            <Timer
+                              defaultMinutes={25}
+                              isActive={runningTaskId === task._id}
+                              onStart={() => {
+                                timerStartedRef.current[task._id] = true;
+                                setRunningTaskId(task._id);
+                              }}
+                              onStop={() => {
+                                setRunningTaskId(task._id);
+                              }}
+                              onComplete={() =>
+                                markCompleted(task._id, task.title)
+                              }
+                              onManualComplete={() =>
+                                markCompleted(task._id, task.title)
+                              }
+                            />
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            {tasks.length === 0 && (
               <p>No tasks yet. Add some from here 👉 </p>
             )}
           </div>
 
           <div className="card">
             <h3>➕ Add Task</h3>
-
             <form onSubmit={addTask}>
               <input
                 type="text"
@@ -222,16 +272,13 @@ const Tasks = () => {
                 value={taskTitle}
                 onChange={(e) => setTaskTitle(e.target.value)}
               />
-
               <textarea
                 placeholder="Task description"
                 value={taskDesc}
                 onChange={(e) => setTaskDesc(e.target.value)}
               />
-
               <button type="submit">Add Task</button>
             </form>
-
             {message && <p className="success-msg">{message}</p>}
           </div>
         </div>
