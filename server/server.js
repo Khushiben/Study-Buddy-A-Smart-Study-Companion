@@ -30,6 +30,11 @@ app.use("/api/tasks", require("./routes/tasks")); // ✅ tasks route added
 // ✅ Flashcards route (JWT protected internally)
 app.use("/api/flashcards", require("./routes/flashcardsApi"));
 
+// ✅ Deadline routes (JWT protected internally)
+const deadlineRoutes = require("./routes/deadlineRoutes");
+app.use("/api/deadlines", deadlineRoutes);
+
+
 // ✅ Start server
 app.listen(5000, () => {
   console.log("🚀 Server running on port 5000");

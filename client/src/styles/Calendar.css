@@ -1,0 +1,134 @@
+/* Reset some defaults */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 220px; /* adjust width as your sidebar */
+  background-color: #1e40af; /* your blue */
+  color: white;
+  height: 100vh;
+  position: fixed; /* keep it fixed on the left */
+  top: 0;
+  left: 0;
+  padding-top: 20px;
+  overflow-y: auto;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+/* Sidebar links */
+.sidebar a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  padding: 12px 20px;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.sidebar a:hover {
+  background-color: #2563eb;
+}
+
+/* Page wrapper */
+.calendar-page {
+  margin-left: 240px; /* same as sidebar width + some gap */
+  padding: 20px;
+}
+
+/* Two-column layout inside page */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 20px;
+}
+
+/* Common card style */
+.card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Card headings */
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Form inputs */
+.card input,
+.card textarea,
+.card button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.card textarea {
+  resize: none;
+  height: 80px;
+}
+
+/* Add button */
+.card button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.card button:hover {
+  background-color: #1d4ed8;
+}
+
+/* Calendar tweaks */
+.fc {
+  font-size: 14px;
+}
+
+.fc-toolbar-title {
+  font-size: 20px !important;
+  font-weight: 600;
+}
+
+/* Upcoming list */
+.card ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.card li {
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .calendar-page {
+    margin-left: 0;
+    padding: 10px;
+  }
+  
+  .calendar-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+}

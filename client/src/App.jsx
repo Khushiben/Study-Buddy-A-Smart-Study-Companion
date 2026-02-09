@@ -9,7 +9,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword"; // <-- added
 import Tasks from "./pages/Tasks";
 import Flashcards from "./pages/Flashcards";
-
+import Calendar from "./pages/Calendar";
 
 function App() {
   return (
@@ -22,6 +22,7 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} /> 
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/flashcards" element={<Flashcards />} />
+        <Route path="/calendar" element={<Calendar />} />
 
         {/* 🔐 PROTECTED DASHBOARD */}
         <Route
