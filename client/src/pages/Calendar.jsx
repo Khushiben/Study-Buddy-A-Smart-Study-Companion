@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -14,6 +15,7 @@ const Calendar = () => {
   const [deadlines, setDeadlines] = useState([]);
   const [upcoming, setUpcoming] = useState([]);
   const [success, setSuccess] = useState(false);
+  const [username, setUsername] = useState("");
 
   const [form, setForm] = useState({
     title: "",
@@ -21,28 +23,67 @@ const Calendar = () => {
     deadlineDate: ""
   });
 
+
   const token = localStorage.getItem("token");
+  const fetchUser = async () => {
+  try {
+    // Add the full localhost URL here
+    const res = await axios.get("http://localhost:5000/api/user", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    setUsername(res.data.name);
+  } catch (err) {
+    console.error("Fetch User Error:", err);
+    setUsername("User");
+  }
+};
+useEffect(() => {
+  if (!token) return;
+
+  fetchUser();
+  fetchDeadlines();
+  fetchUpcoming();
+}, [token]);
+
+
 
   /* ---------------- FETCH ALL DEADLINES ---------------- */
-  const fetchDeadlines = async () => {
-    const res = await fetch("/api/deadlines", {
+const fetchDeadlines = async () => {
+  try {
+    const res = await fetch("http://localhost:5000/api/deadlines", {
       headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
-    setDeadlines(data);
-  };
+    setDeadlines(Array.isArray(data) ? data : []);
+  } catch (err) {
+    console.error("Error fetching deadlines:", err);
+  }
+};
 
   /* ---------------- FETCH UPCOMING DEADLINES ---------------- */
-  const fetchUpcoming = async () => {
-    const res = await fetch("/api/deadlines/upcoming", {
+const fetchUpcoming = async () => {
+  try {
+    const res = await fetch("http://localhost:5000/api/deadlines/upcoming", {
       headers: { Authorization: `Bearer ${token}` }
     });
-    const data = await res.json();
-    setUpcoming(data);
-  };
 
+    // Check if the response is valid before parsing
+    if (!res.ok) {
+      throw new Error(`Server error: ${res.status}`);
+    }
+
+    const data = await res.json();
+    
+    // Ensure data is an array so .map() doesn't crash the UI
+    setUpcoming(Array.isArray(data) ? data : []);
+    
+  } catch (err) {
+    console.error("Error fetching upcoming deadlines:", err);
+    setUpcoming([]); // Set to empty array on error to prevent UI break
+  }
+};
   /* ---------------- ADD DEADLINE ---------------- */
- const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (!token) {
@@ -51,8 +92,7 @@ const Calendar = () => {
   }
 
   try {
-    console.log("Submitting form:", form); // debug
-    const res = await fetch("/api/deadlines", {
+    const res = await fetch("http://localhost:5000/api/deadlines", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -61,10 +101,15 @@ const Calendar = () => {
       body: JSON.stringify(form)
     });
 
-    const data = await res.json();
-    console.log("Backend response:", data);
+    // Check if response is actually JSON before parsing
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new TypeError("Oops, we didn't get JSON back from the server!");
+    }
 
-    if (data.status === "success") {
+    const data = await res.json();
+
+    if (res.ok) { // res.ok checks for status 200-299
       setSuccess(true);
       setForm({ title: "", description: "", deadlineDate: "" });
       fetchDeadlines();
@@ -74,35 +119,39 @@ const Calendar = () => {
       alert(data.message || "Error adding deadline");
     }
   } catch (err) {
-    console.error("Error adding deadline:", err);
-    alert("Failed to add deadline. Check console for details.");
+    console.error("Submit error:", err);
+    alert("Server connection failed. Is your backend running on port 5000?");
   }
 };
 
-  /* ---------------- CALENDAR EVENTS ---------------- */
-  const calendarEvents = deadlines.map(d => ({
-    id: d.id,
-    title: d.title,
-    start: d.start || d.deadlineDate,
-    description: d.description
-  }));
+/* ---------------- CALENDAR EVENTS ---------------- */
+// Add "deadlines &&" to ensure the code only runs if deadlines exists
+const calendarEvents = (deadlines || []).map(d => {
+  // Check if d exists before accessing its properties
+  if (!d) return {}; 
 
+  return {
+    id: d._id || d.id, // Handles both MongoDB _id and fallback
+    title: d.title || "Untitled",
+    start: d.deadlineDate || d.start,
+    extendedProps: {
+      description: d.description || ""
+    }
+  };
+});
   return (
     <ProtectedRoute>
       <div className="dashboard-layout">
         <Sidebar />
 
         <main className="main-content">
-          <Marquee text="📅 Track your deadlines and stay ahead with Study Buddy!" />
+          
 
           <div className="calendar-page">
+            <Marquee title="Your" username={username} />
             <h2>Your Deadlines 👋</h2>
 
-            {success && (
-              <p style={{ color: "green", marginBottom: "10px" }}>
-                ✅ Deadline added!
-              </p>
-            )}
+            
 
             {/* ===== TWO COLUMN LAYOUT ===== */}
             <div className="calendar-grid">
@@ -141,7 +190,13 @@ const Calendar = () => {
 
                   <button type="submit">Add Deadline</button>
                 </form>
+                {success && (
+                <p style={{ color: "green", marginBottom: "10px" }}>
+                ✅ Deadline added!
+                </p>
+            )}
               </div>
+              
 
               {/* -------- CALENDAR -------- */}
               <div className="card">
@@ -157,6 +212,7 @@ const Calendar = () => {
                     right: "dayGridMonth,timeGridWeek,timeGridDay"
                   }}
                   events={calendarEvents}
+                  displayEventTime={false}
                   eventDidMount={(info) => {
                     if (info.event.extendedProps.description) {
                       info.el.title =
@@ -183,10 +239,10 @@ const Calendar = () => {
                 ))}
               </ul>
             </div>
-
+            <Footer />
           </div>
 
-          <Footer />
+          
         </main>
       </div>
     </ProtectedRoute>

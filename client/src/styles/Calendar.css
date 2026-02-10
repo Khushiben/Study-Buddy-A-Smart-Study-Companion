@@ -63,7 +63,7 @@ body, html {
   font-weight: 600;
 }
 
-/* Form inputs */
+/* Form inputs 
 .card input,
 .card textarea,
 .card button {
@@ -80,7 +80,7 @@ body, html {
   height: 80px;
 }
 
-/* Add button */
+/* Add button 
 .card button {
   background-color: #2563eb;
   color: white;
@@ -92,7 +92,7 @@ body, html {
 
 .card button:hover {
   background-color: #1d4ed8;
-}
+}*/
 
 /* Calendar tweaks */
 .fc {

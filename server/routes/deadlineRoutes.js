@@ -21,7 +21,7 @@ router.post("/", protect, async (req, res) => {
     }
 
     await Deadline.create({
-      userId: req.user.id,
+      userId: req.userId,
       title,
       description,
       deadlineDate
@@ -44,7 +44,7 @@ router.post("/", protect, async (req, res) => {
 */
 router.get("/", protect, async (req, res) => {
   try {
-    const deadlines = await Deadline.find({ userId: req.user.id });
+    const deadlines = await Deadline.find({ userId: req.userId });
 
     // Match FullCalendar JSON structure used in PHP
     const events = deadlines.map(d => ({
@@ -78,7 +78,7 @@ router.get("/upcoming", protect, async (req, res) => {
     weekFromNow.setDate(today.getDate() + 7);
 
     const deadlines = await Deadline.find({
-      userId: req.user.id,
+      userId: req.userId,
       deadlineDate: {
         $gte: today,
         $lte: weekFromNow
