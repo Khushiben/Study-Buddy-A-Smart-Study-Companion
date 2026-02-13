@@ -117,6 +117,21 @@
   margin-bottom: 15px;
 }
 
+/* informational notice */
+.info-message {
+  width: 100%;
+  padding: 10px;
+  background: #ffeb3b;
+  color: #333;
+  text-align: center;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.go-section {
+  margin-bottom: 12px;
+}
+
 /* Flashcard look polish */
 .flashcard {
   cursor: pointer;

@@ -2,8 +2,10 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/sidebar.css";
 
-function Sidebar({ activePage }) {
+function Sidebar({ activePage, active }) {
   const navigate = useNavigate();
+  // support both prop names for backward compatibility
+  const currentActive = activePage || active;
 
   const menuItems = [
     { name: "Dashboard", icon: "📊", path: "/dashboard" },
@@ -28,7 +30,7 @@ function Sidebar({ activePage }) {
         {menuItems.map((item) => (
           <li
             key={item.name}
-            className={activePage === item.name ? "active" : ""}
+            className={currentActive === item.name ? "active" : ""}
             onClick={() =>
               item.name === "Logout"
                 ? handleLogout()

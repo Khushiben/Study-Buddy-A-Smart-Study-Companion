@@ -178,7 +178,7 @@ const Tasks = () => {
 
   return (
     <div className="container">
-      <Sidebar />
+      <Sidebar activePage="Tasks" />
 
       <main className="main">
         <Marquee title="Your Tasks" username={username} />

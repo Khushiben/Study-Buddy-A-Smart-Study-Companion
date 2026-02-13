@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import "../styles/Flashcards.css";
@@ -13,16 +14,46 @@ const Flashcards = () => {
   const [subjectType, setSubjectType] = useState("General"); // General | Other
   const [customSubject, setCustomSubject] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("All");
+  // lastSubject removed – we no longer show temporary post‑add link
 
   const [subjects, setSubjects] = useState([]); // 🔥 ALL subjects (fixed)
   const [username, setUsername] = useState("");
+  const [infoMessage, setInfoMessage] = useState(""); // temporary notices when filter empty
+
+  const location = useLocation();
 
   const token = localStorage.getItem("token");
 
+  // read filter from query param; actual fetch happens in selectedSubject effect
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const qs = params.get("subject");
+    if (qs) {
+      setSelectedSubject(qs);
+      if (qs === "General") {
+        setSubjectType("General");
+        setCustomSubject("");
+      } else {
+        setSubjectType("Other");
+        setCustomSubject(qs);
+      }
+    } else {
+      // no query => reset to All so "+ add" always shows all subjects
+      setSelectedSubject("All");
+      setSubjectType("General");
+      setCustomSubject("");
+    }
+  }, [location.search]);
+
+  // load user info once
   useEffect(() => {
     fetchUser();
+  }, [token]);
+
+  // keep fetching when selectedSubject changes from UI controls
+  useEffect(() => {
     fetchFlashcards();
-  }, [token, selectedSubject]);
+  }, [selectedSubject]);
 
   const fetchUser = () => {
     axios
@@ -46,13 +77,39 @@ const Flashcards = () => {
     const uniqueSubjects = [...new Set(allCards.map((c) => c.subject))];
     setSubjects(uniqueSubjects);
 
-    // ✅ apply filter locally
-    if (selectedSubject === "All") {
+    // normalize the selectedSubject casing to match one of the available subjects
+    let currentSubject = selectedSubject;
+    if (currentSubject.toLowerCase() !== "all") {
+      const match = uniqueSubjects.find(
+        (s) => s.toLowerCase() === currentSubject.toLowerCase()
+      );
+      if (match && match !== currentSubject) {
+        currentSubject = match;
+        setSelectedSubject(match);
+      }
+    }
+
+    // ✅ apply filter locally using normalized subject
+    if (currentSubject.toLowerCase() === "all") {
       setFlashcards(allCards);
     } else {
-      setFlashcards(
-        allCards.filter((c) => c.subject === selectedSubject)
+      const filtered = allCards.filter(
+        (c) => c.subject.toLowerCase() === currentSubject.toLowerCase()
       );
+      if (filtered.length === 0) {
+        // nothing for this subject: show message and revert to all
+        setInfoMessage(
+          `No flashcards for ${currentSubject}. Showing all subjects instead.`
+        );
+        setFlashcards(allCards);
+        // reset filter after brief delay
+        setTimeout(() => {
+          setInfoMessage("");
+          setSelectedSubject("All");
+        }, 2000); // 2 seconds
+      } else {
+        setFlashcards(filtered);
+      }
     }
   };
 
@@ -101,13 +158,17 @@ const Flashcards = () => {
   };
 
   return (
+    <>
     <div className="flashcards-page">
-      <Sidebar active="flashcards" />
+      <Sidebar activePage="Flashcards" />
 
       <main className="main">
         <Marquee title="Your Flashcards" username={username} />
 
         <div className="cards">
+          {infoMessage && (
+            <div className="info-message">{infoMessage}</div>
+          )}
           {/* ➕ ADD FLASHCARD */}
           <div className="card auth-container">
             <h2>Add Flashcard</h2>
@@ -195,6 +256,7 @@ const Flashcards = () => {
         <Footer />
       </main>
     </div>
+    </>
   );
 };
 

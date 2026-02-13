@@ -1,0 +1,72 @@
+.subject-section {
+  margin-bottom: 20px;
+}
+
+.subject-title {
+  color: #4e73df;
+  margin-bottom: 10px;
+}
+
+.note-card {
+  background: #f8f9fc;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border-left: 4px solid #4e73df;
+}
+
+.note-card p {
+  margin-bottom: 8px;
+}
+
+.file-actions {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 5px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.file-actions a {
+  text-decoration: none;
+  color: #1cc88a;
+  font-weight: 500;
+}
+
+.file-actions a:hover {
+  text-decoration: underline;
+}
+
+/* shared button/link styling used for downloads and flashcard navigation */
+.download-btn {
+  background: none;
+  border: none;
+  color: #1cc88a;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  font-size: inherit;
+}
+
+.download-btn:hover {
+  text-decoration: underline;
+}
+
+.subject-actions {
+  /* same layout as file-actions */
+  display: flex;
+  gap: 15px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.go-section {
+  /* use same flex layout for consistency */
+  display: flex;
+  gap: 15px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}

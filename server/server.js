@@ -1,11 +1,15 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const fs = require("fs");
 require("dotenv").config();
 
 const app = express();
 
-// ✅ CORS config (unchanged)
+if (!fs.existsSync("uploads")) {
+  fs.mkdirSync("uploads");
+}
+
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -13,29 +17,22 @@ app.use(
   })
 );
 
-// ✅ JSON parsing
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// ✅ Connect MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.log(err));
 
-// 🔐 ROUTES (unchanged)
 app.use("/api/auth", require("./routes/auth"));
-app.use("/api", require("./routes/user")); // ✅ user + /user route
-app.use("/api/tasks", require("./routes/tasks")); // ✅ tasks route added
-
-// ✅ Flashcards route (JWT protected internally)
+app.use("/api", require("./routes/user"));
+app.use("/api/tasks", require("./routes/tasks"));
 app.use("/api/flashcards", require("./routes/flashcardsApi"));
+app.use("/api/deadlines", require("./routes/deadlineRoutes"));
+app.use("/uploads", express.static("uploads"));
+app.use("/api/notes", require("./routes/notes"));
 
-// ✅ Deadline routes (JWT protected internally)
-const deadlineRoutes = require("./routes/deadlineRoutes");
-app.use("/api/deadlines", deadlineRoutes);
-
-
-// ✅ Start server
 app.listen(5000, () => {
   console.log("🚀 Server running on port 5000");
 });

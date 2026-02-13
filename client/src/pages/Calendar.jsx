@@ -142,7 +142,7 @@ const calendarEvents = (deadlines || []).map(d => {
   return (
     <ProtectedRoute>
       <div className="dashboard-layout">
-        <Sidebar />
+        <Sidebar activePage="Calendar" />
 
         <main className="main-content">
           
