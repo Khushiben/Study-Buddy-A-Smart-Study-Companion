@@ -148,12 +148,8 @@ const calendarEvents = (deadlines || []).map(d => {
           
 
           <div className="calendar-page">
-            <Marquee title="Your" username={username} />
-            <h2>Your Deadlines 👋</h2>
-
-            
-
-            {/* ===== TWO COLUMN LAYOUT ===== */}
+            <Marquee title="Your Deadlines" username={username} />
+          {/* ===== TWO COLUMN LAYOUT ===== */}
             <div className="calendar-grid">
 
               {/* -------- ADD DEADLINE FORM -------- */}

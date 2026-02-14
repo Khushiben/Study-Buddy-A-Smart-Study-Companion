@@ -132,3 +132,24 @@ body, html {
     height: auto;
   }
 }
+
+/* ==== FullCalendar event text fixes ==== */
+/* allow titles to wrap instead of being truncated */
+.fc .fc-event-title,
+.fc .fc-event-title-container {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* ensure daygrid events grow to fit content */
+.fc .fc-daygrid-event {
+  height: auto !important;
+  max-width: none !important;
+}
+
+/* sometimes the inner div has ellipsis, override it */
+.fc .fc-event-main-frame {
+  white-space: normal !important;
+}
+
