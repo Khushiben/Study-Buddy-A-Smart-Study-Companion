@@ -11,6 +11,7 @@ import Tasks from "./pages/Tasks";
 import Flashcards from "./pages/Flashcards";
 import Calendar from "./pages/Calendar";
 import Notes from "./pages/Notes";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -30,7 +31,15 @@ function App() {
         </ProtectedRoute>
       }
     />
-
+    <Route
+      path="/profile"
+      element={
+        <ProtectedRoute>
+          <Profile />
+        </ProtectedRoute>
+      }
+    />
+    
     <Route
       path="/tasks"
       element={

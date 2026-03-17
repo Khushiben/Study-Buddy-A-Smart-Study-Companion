@@ -32,6 +32,7 @@ app.use("/api/flashcards", require("./routes/flashcardsApi"));
 app.use("/api/deadlines", require("./routes/deadlineRoutes"));
 app.use("/uploads", express.static("uploads"));
 app.use("/api/notes", require("./routes/notes"));
+app.use("/api", require("./routes/progress"));
 
 app.listen(5000, () => {
   console.log("🚀 Server running on port 5000");

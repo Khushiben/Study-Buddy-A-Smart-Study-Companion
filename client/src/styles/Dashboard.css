@@ -21,12 +21,27 @@
 }
 
 /* Header marquee */
-marquee {
+.marquee-container {
   background-color: pink;
   padding: 10px;
   border-radius: 5px;
   margin-bottom: 20px;
-  /*text-decoration: underline;*/
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-text {
+  display: inline-block;
+  animation: scroll-left 10s linear infinite;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 
 /* Cards Grid: 2 per row */

@@ -1,0 +1,151 @@
+/* ================= APP LAYOUT ================= */
+
+.app-container{
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar space handled automatically */
+.main-content{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #f5f7fb;
+  
+}
+
+/* Header marquee */
+.marquee-container {
+  background-color: pink;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-text {
+  display: inline-block;
+  animation: scroll-left 10s linear infinite;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* ================= PROFILE SECTION ================= */
+
+.profile-container{
+  padding: 30px 40px;
+  flex: 1;
+  margin-left: 220px;
+}
+
+/* ================= PROFILE CARD ================= */
+
+.profile-card{
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  width: 320px;
+  margin-bottom: 35px;
+}
+
+.profile-card p{
+  margin: 10px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+/* ================= PROGRESS SECTION ================= */
+
+.progress-section{
+  margin-top: 10px;
+}
+
+.progress-section h2{
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+
+/* Grid Layout */
+
+.progress-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(230px,1fr));
+  gap: 25px;
+}
+
+/* ================= PROGRESS CARDS ================= */
+
+.progress-card{
+  background: white;
+  padding: 22px;
+  border-radius: 14px;
+  border: 1px solid #ececec;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.07);
+  transition: all 0.25s ease;
+}
+
+.progress-card:hover{
+  transform: translateY(-6px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.15);
+}
+
+.progress-card h3{
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.progress-card p{
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+/* ================= PROGRESS BAR ================= */
+
+.progress-bar{
+  width: 100%;
+  height: 10px;
+  background: #e9ecf2;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.progress-fill{
+  height: 100%;
+  background: linear-gradient(90deg,#36d1dc,#5b86e5);
+  border-radius: 20px;
+  transition: width 0.5s ease;
+}
+
+/* ================= PRODUCTIVITY CARD ================= */
+
+.productivity{
+  background: linear-gradient(135deg,#667eea,#764ba2);
+  color: white;
+  text-align: center;
+}
+
+.productivity h3{
+  color: white;
+}
+
+.productivity p{
+  font-size: 34px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* ================= FOOTER ================= */
+
+footer{
+  margin-top: auto;
+  /*margin-left: 220px; /* space for sidebar */
+}

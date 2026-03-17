@@ -9,6 +9,7 @@ function Sidebar({ activePage, active }) {
 
   const menuItems = [
     { name: "Dashboard", icon: "📊", path: "/dashboard" },
+    { name: "Profile", icon: "👤", path: "/profile" },
     { name: "Tasks", icon: "📝", path: "/Tasks" },
     { name: "Flashcards", icon: "📚", path: "/flashcards" },
     { name: "Notes", icon: "📂", path: "/notes" },
