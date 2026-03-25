@@ -10,14 +10,39 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 router.get("/progress", authMiddleware, async (req, res) => {
   try {
-
     const userId = req.userId;
+    const now = new Date();
+
+    const weekStart = new Date();
+    weekStart.setDate(now.getDate() - 7);
+
+    const monthStart = new Date();
+    monthStart.setMonth(now.getMonth() - 1);
+
+    const yearStart = new Date();
+    yearStart.setFullYear(now.getFullYear() - 1);
 
     // Tasks
     const totalTasks = await Task.countDocuments({ user: userId });
+
     const completedTasks = await Task.countDocuments({
       user: userId,
       status: "completed"
+    });
+
+    const weeklyTasks = await Task.countDocuments({
+      user: userId,
+      createdAt: { $gte: weekStart }
+    });
+
+    const monthlyTasks = await Task.countDocuments({
+      user: userId,
+      createdAt: { $gte: monthStart }
+    });
+
+    const yearlyTasks = await Task.countDocuments({
+      user: userId,
+      createdAt: { $gte: yearStart }
     });
 
     const taskProgress =
@@ -30,16 +55,16 @@ router.get("/progress", authMiddleware, async (req, res) => {
 
     // Notes
     const notes = await Note.countDocuments({
-      userId: userId
+      userId
     });
 
-    // Upcoming Deadlines
+    // Deadlines
     const deadlines = await Deadline.countDocuments({
-      userId: userId,
+      userId,
       deadlineDate: { $gte: new Date() }
     });
 
-    // Productivity Score
+    // Productivity
     const flashcardScore = Math.min((flashcards / 50) * 100, 100);
     const notesScore = Math.min((notes / 20) * 100, 100);
 
@@ -56,7 +81,10 @@ router.get("/progress", authMiddleware, async (req, res) => {
       flashcards,
       notes,
       deadlines,
-      productivityScore
+      productivityScore,
+      weeklyTasks,
+      monthlyTasks,
+      yearlyTasks
     });
 
   } catch (err) {
