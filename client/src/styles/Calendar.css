@@ -36,8 +36,9 @@ body, html {
 
 /* Page wrapper */
 .calendar-page {
-  margin-left: 240px; /* same as sidebar width + some gap */
+  /*margin-left: 240px; /* same as sidebar width + some gap */
   padding: 20px;
+  margin-left: 20px;
 }
 
 /* Two-column layout inside page */

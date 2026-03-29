@@ -38,9 +38,10 @@ function Profile() {
 
       <div className="main-content">
 
+      <div className="profile-container">
         <Marquee title="Your Profile" username={user?.name} />
 
-        <div className="profile-container">
+        
 
           <h2>👤 Profile</h2>
 

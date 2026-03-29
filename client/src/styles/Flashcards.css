@@ -1,5 +1,6 @@
 .flashcards-page {
   min-height: 100vh;
+  margin-left: 20px;
 
   /* sidebar is fixed → don't use flex */
   background-color: #f5f5f5;
