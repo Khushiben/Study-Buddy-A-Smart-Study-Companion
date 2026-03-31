@@ -1,0 +1,15 @@
+{
+  "name": "study-buddy",
+  "version": "1.0.0",
+  "description": "A Smart Study Companion",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "install": "npm install --workspaces",
+    "dev": "npm run dev --workspaces",
+    "build": "npm run build --workspaces"
+  }
+}
