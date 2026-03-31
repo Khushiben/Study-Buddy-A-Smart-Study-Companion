@@ -12,6 +12,7 @@ import Flashcards from "./pages/Flashcards";
 import Calendar from "./pages/Calendar";
 import Notes from "./pages/Notes";
 import Profile from "./pages/Profile";
+import StudyCircle from "./pages/StudyCircle";
 
 function App() {
   return (
@@ -72,6 +73,15 @@ function App() {
       element={
         <ProtectedRoute>
           <Notes />
+        </ProtectedRoute>
+      }
+    />
+
+    <Route
+      path="/study-circle"
+      element={
+        <ProtectedRoute>
+          <StudyCircle />
         </ProtectedRoute>
       }
     />

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Marquee from "../components/Marquee";
 import Footer from "../components/Footer";
+import NotificationPanel from "../components/NotificationPanel";
 import "../styles/Profile.css";
 {/*npm install recharts*/}
 import {
@@ -40,6 +41,10 @@ function Profile() {
 
       <div className="profile-container">
         <Marquee title="Your Profile" username={user?.name} />
+
+        <div className="profile-notifications-wrap">
+          <NotificationPanel />
+        </div>
 
         
 

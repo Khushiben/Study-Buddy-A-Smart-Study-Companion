@@ -14,6 +14,7 @@ function Sidebar({ activePage, active }) {
     { name: "Flashcards", icon: "📚", path: "/flashcards" },
     { name: "Notes", icon: "📂", path: "/notes" },
     { name: "Calendar", icon: "👥", path: "/calendar" },
+    { name: "Study Circle", icon: "💬", path: "/study-circle" },
     { name: "Logout", icon: "🚪" },
   ];
 

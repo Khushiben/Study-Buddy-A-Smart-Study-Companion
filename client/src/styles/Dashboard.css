@@ -59,6 +59,16 @@
   transition: all 0.3s ease;
 }
 
+.notifications-card {
+  grid-column: span 2;
+}
+
+@media (max-width: 900px) {
+  .notifications-card {
+    grid-column: span 1;
+  }
+}
+
 .card:hover {
   /*transform: translateY(-5px);*/
   box-shadow: 0 8px 15px rgba(0,0,0,0.2);

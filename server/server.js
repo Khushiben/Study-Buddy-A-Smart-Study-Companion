@@ -1,10 +1,14 @@
 const express = require("express");
+const http = require("http");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const fs = require("fs");
+const { Server } = require("socket.io");
 require("dotenv").config();
+const registerStudyCircleSocket = require("./socket/studyCircleSocket");
 
 const app = express();
+const server = http.createServer(app);
 
 if (!fs.existsSync("uploads")) {
   fs.mkdirSync("uploads");
@@ -16,6 +20,16 @@ app.use(
     credentials: true,
   })
 );
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    credentials: true,
+  },
+});
+
+registerStudyCircleSocket(io);
+app.set("io", io);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -33,7 +47,8 @@ app.use("/api/deadlines", require("./routes/deadlineRoutes"));
 app.use("/uploads", express.static("uploads"));
 app.use("/api/notes", require("./routes/notes"));
 app.use("/api", require("./routes/progress"));
+app.use("/api/study-circle", require("./routes/studyCircle"));
 
-app.listen(5000, () => {
+server.listen(5000, () => {
   console.log("🚀 Server running on port 5000");
 });

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import Modal from "../components/Modal";
+import NotificationPanel from "../components/NotificationPanel";
 import "../styles/Dashboard.css";
 import Marquee from "../components/Marquee";
 
@@ -62,6 +63,10 @@ const Dashboard = () => {
         <Marquee title="Welcome" username={username} />
 
         <div className="cards">
+          <div className="card notifications-card">
+            <NotificationPanel />
+          </div>
+
           <div className="card">
             <h3>💡 How this web works</h3>
             <p>Click the button to see the steps</p>
