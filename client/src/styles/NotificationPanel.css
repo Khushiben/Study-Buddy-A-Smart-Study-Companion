@@ -93,3 +93,13 @@
 .notification-actions .reject {
   background: #b91c1c;
 }
+
+.notification-actions .close {
+  background: #6b7280;
+  padding: 4px 8px;
+  font-size: 14px;
+}
+
+.notification-actions .close:hover {
+  background: #4b5563;
+}

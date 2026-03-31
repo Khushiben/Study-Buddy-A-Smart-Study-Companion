@@ -7,9 +7,6 @@ function GroupList({
   createGroupName,
   setCreateGroupName,
   onCreateGroup,
-  inviteValue,
-  setInviteValue,
-  onInvite,
   joinGroupId,
   setJoinGroupId,
   onJoinGroup,
@@ -71,21 +68,6 @@ function GroupList({
           />
           <button type="button" onClick={onJoinGroup}>
             Join
-          </button>
-        </div>
-      </div>
-
-      <div className="study-circle-panel-block">
-        <h4>Invite Member</h4>
-        <div className="inline-form">
-          <input
-            value={inviteValue}
-            onChange={(e) => setInviteValue(e.target.value)}
-            placeholder="Email or user id"
-            disabled={!activeGroupId}
-          />
-          <button type="button" onClick={onInvite} disabled={!activeGroupId}>
-            Invite
           </button>
         </div>
       </div>

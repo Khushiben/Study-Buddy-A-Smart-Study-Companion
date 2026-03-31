@@ -104,7 +104,7 @@ router.post("/groups/:groupId/join", async (req, res) => {
 router.post("/groups/:groupId/invite", async (req, res) => {
   try {
     const { groupId } = req.params;
-    const { email, userId } = req.body;
+    const { email } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(groupId)) {
       return res.status(400).json({ message: "Invalid group id" });
@@ -119,16 +119,14 @@ router.post("/groups/:groupId/invite", async (req, res) => {
       return res.status(403).json({ message: "Only the creator can invite users" });
     }
 
-    let invitedUser = null;
-
-    if (email) {
-      invitedUser = await User.findOne({ email: email.trim().toLowerCase() });
-    } else if (userId && mongoose.Types.ObjectId.isValid(userId)) {
-      invitedUser = await User.findById(userId);
+    if (!email || !email.trim()) {
+      return res.status(400).json({ message: "Email is required" });
     }
 
+    const invitedUser = await User.findOne({ email: email.trim().toLowerCase() });
+
     if (!invitedUser) {
-      return res.status(404).json({ message: "Invited user not found" });
+      return res.status(404).json({ message: "User with this email not found" });
     }
 
     const alreadyMember = group.members.some(
@@ -265,6 +263,28 @@ router.post("/invitations/:notificationId/respond", async (req, res) => {
     notification.status = "read";
     await notification.save();
 
+    // Send notification to inviter
+    const inviterNotificationType = action === "accept" ? "invitation_accepted" : "invitation_rejected";
+    const inviterNotificationText =
+      action === "accept"
+        ? `${notification.userId} accepted your invitation to join ${group.name}`
+        : `${notification.userId} rejected your invitation to join ${group.name}`;
+
+    const invitedUser = await User.findById(req.userId).select("name");
+    const inviterNotification = await Notification.create({
+      type: inviterNotificationType,
+      userId: notification.fromUser,
+      fromUser: req.userId,
+      groupId: group._id,
+      status: "pending",
+      text: `${invitedUser.name} ${action === "accept" ? "accepted your invitation to join" : "rejected your invitation to join"} ${group.name}`,
+    });
+
+    const io = req.app.get("io");
+    if (io) {
+      io.to(`user:${notification.fromUser.toString()}`).emit("studyCircle:newNotification", inviterNotification);
+    }
+
     const populatedGroup = await Group.findById(group._id)
       .populate("creator", "name email")
       .populate("members", "name email");
@@ -339,6 +359,78 @@ router.patch("/groups/:groupId/read", async (req, res) => {
     return res.json({ message: "Group marked as read" });
   } catch (error) {
     return res.status(500).json({ message: "Failed to mark group as read" });
+  }
+});
+
+router.post("/groups/:groupId/leave", async (req, res) => {
+  try {
+    const { groupId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(groupId)) {
+      return res.status(400).json({ message: "Invalid group id" });
+    }
+
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+
+    // Check if user is a member
+    if (!group.members.some((memberId) => memberId.toString() === req.userId)) {
+      return res.status(400).json({ message: "You are not a member of this group" });
+    }
+
+    // Remove user from members
+    group.members = group.members.filter((memberId) => memberId.toString() !== req.userId);
+
+    // Remove user's member state
+    group.memberStates = (group.memberStates || []).filter(
+      (state) => state.user.toString() !== req.userId
+    );
+
+    // Remove user from pending invites if any
+    group.pendingInvites = (group.pendingInvites || []).filter(
+      (invite) => invite.user.toString() !== req.userId
+    );
+
+    await group.save();
+
+    return res.json({ message: "Successfully left the group" });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to leave group" });
+  }
+});
+
+router.delete("/groups/:groupId", async (req, res) => {
+  try {
+    const { groupId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(groupId)) {
+      return res.status(400).json({ message: "Invalid group id" });
+    }
+
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+
+    // Only creator can delete group
+    if (group.creator.toString() !== req.userId) {
+      return res.status(403).json({ message: "Only the creator can delete this group" });
+    }
+
+    // Delete all messages in the group
+    await Message.deleteMany({ group: groupId });
+
+    // Delete all notifications related to this group
+    await Notification.deleteMany({ groupId });
+
+    // Delete the group
+    await Group.findByIdAndDelete(groupId);
+
+    return res.json({ message: "Group deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to delete group" });
   }
 });
 

@@ -32,7 +32,7 @@ function StudyCircle() {
   const [sharing, setSharing] = useState(false);
 
   const [createGroupName, setCreateGroupName] = useState("");
-  const [inviteValue, setInviteValue] = useState("");
+  const [inviteEmail, setInviteEmail] = useState("");
   const [joinGroupId, setJoinGroupId] = useState("");
   const [messageText, setMessageText] = useState("");
   const [statusText, setStatusText] = useState("");
@@ -257,19 +257,15 @@ function StudyCircle() {
       return;
     }
 
-    if (!inviteValue.trim()) {
-      showStatus("Enter email or user id");
+    if (!inviteEmail.trim()) {
+      showStatus("Enter an email address");
       return;
     }
-
-    const trimmed = inviteValue.trim();
-    const isObjectId = /^[a-f\d]{24}$/i.test(trimmed);
-    const payload = isObjectId ? { userId: trimmed } : { email: trimmed };
 
     try {
       const res = await axios.post(
         `${API_BASE_URL}/api/study-circle/groups/${selectedGroup._id}/invite`,
-        payload,
+        { email: inviteEmail.trim() },
         authHeaders
       );
 
@@ -277,7 +273,7 @@ function StudyCircle() {
         prev.map((group) => (group._id === res.data._id ? res.data : group))
       );
       setSelectedGroup(res.data);
-      setInviteValue("");
+      setInviteEmail("");
       showStatus("User invited to group");
     } catch (error) {
       if (handleAuthFailure(error)) return;
@@ -348,6 +344,63 @@ function StudyCircle() {
     }, 300);
   };
 
+  const onDeleteGroup = async () => {
+    if (!selectedGroup?._id) {
+      showStatus("Select a group first");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${selectedGroup.name}"? This action cannot be undone and will delete all messages in this group.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await axios.delete(
+        `${API_BASE_URL}/api/study-circle/groups/${selectedGroup._id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setGroups((prev) => prev.filter((group) => group._id !== selectedGroup._id));
+      setSelectedGroup(null);
+      showStatus("Group deleted successfully");
+    } catch (error) {
+      if (handleAuthFailure(error)) return;
+      console.error("Delete group error:", error);
+      showStatus(error.response?.data?.message || "Failed to delete group");
+    }
+  };
+
+  const onLeaveGroup = async () => {
+    if (!selectedGroup?._id) {
+      showStatus("Select a group first");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Are you sure you want to leave "${selectedGroup.name}"?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await axios.post(
+        `${API_BASE_URL}/api/study-circle/groups/${selectedGroup._id}/leave`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setGroups((prev) => prev.filter((group) => group._id !== selectedGroup._id));
+      setSelectedGroup(null);
+      showStatus("Left group successfully");
+    } catch (error) {
+      if (handleAuthFailure(error)) return;
+      console.error("Leave group error:", error);
+      showStatus(error.response?.data?.message || "Failed to leave group");
+    }
+  };
+
   const membersText = selectedGroup?.members?.map((member) => member.name).join(", ") || "";
 
   return (
@@ -367,9 +420,6 @@ function StudyCircle() {
             createGroupName={createGroupName}
             setCreateGroupName={setCreateGroupName}
             onCreateGroup={onCreateGroup}
-            inviteValue={inviteValue}
-            setInviteValue={setInviteValue}
-            onInvite={onInvite}
             joinGroupId={joinGroupId}
             setJoinGroupId={setJoinGroupId}
             onJoinGroup={onJoinGroup}
@@ -387,6 +437,12 @@ function StudyCircle() {
             onOpenShareNote={() => setNoteModalOpen(true)}
             connected={connected}
             membersText={membersText}
+            inviteEmail={inviteEmail}
+            setInviteEmail={setInviteEmail}
+            onInviteMember={onInvite}
+            onDeleteGroup={onDeleteGroup}
+            onLeaveGroup={onLeaveGroup}
+            isGroupCreator={selectedGroup?.creator?._id === userId}
           />
         </section>
 

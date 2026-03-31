@@ -10,6 +10,7 @@ function NotificationPanel() {
 
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [dismissTimers, setDismissTimers] = useState({});
 
   const authHeaders = {
     Authorization: `Bearer ${token}`,
@@ -26,7 +27,9 @@ function NotificationPanel() {
         throw new Error("Failed to load notifications");
       }
       const data = await res.json();
-      setNotifications(data || []);
+      // Only show pending notifications on load
+      const pendingNotifications = (data || []).filter((n) => n.status === "pending");
+      setNotifications(pendingNotifications);
     } catch (error) {
       setNotifications([]);
     } finally {
@@ -37,6 +40,22 @@ function NotificationPanel() {
   useEffect(() => {
     loadNotifications();
   }, []);
+
+  const dismissNotification = (notificationId) => {
+    setNotifications((prev) =>
+      prev.filter((notification) => notification._id !== notificationId)
+    );
+    
+    // Clear any pending timer
+    if (dismissTimers[notificationId]) {
+      clearTimeout(dismissTimers[notificationId]);
+      setDismissTimers((prev) => {
+        const newTimers = { ...prev };
+        delete newTimers[notificationId];
+        return newTimers;
+      });
+    }
+  };
 
   const markAsRead = async (notificationId) => {
     try {
@@ -51,6 +70,16 @@ function NotificationPanel() {
             : notification
         )
       );
+
+      // Auto-dismiss after 4 seconds
+      const timer = setTimeout(() => {
+        dismissNotification(notificationId);
+      }, 4000);
+
+      setDismissTimers((prev) => ({
+        ...prev,
+        [notificationId]: timer,
+      }));
     } catch (error) {
       return;
     }
@@ -118,7 +147,10 @@ function NotificationPanel() {
               onClick={() => handleOpenNotification(notification)}
             >
               <h4>
-                {notification.type === "invite" ? "Group Invitation" : "New Message"}
+                {notification.type === "invite" ? "Group Invitation" : 
+                 notification.type === "invitation_accepted" ? "Invitation Accepted" :
+                 notification.type === "invitation_rejected" ? "Invitation Rejected" :
+                 "New Message"}
               </h4>
               <p>{notification.text || "Open to view details"}</p>
               <small>
@@ -127,24 +159,35 @@ function NotificationPanel() {
               </small>
             </div>
 
-            {notification.type === "invite" && notification.status === "pending" ? (
-              <div className="notification-actions">
+            <div className="notification-actions">
+              {notification.type === "invite" && notification.status === "pending" ? (
+                <>
+                  <button
+                    type="button"
+                    className="accept"
+                    onClick={() => handleInviteResponse(notification._id, "accept")}
+                  >
+                    Accept
+                  </button>
+                  <button
+                    type="button"
+                    className="reject"
+                    onClick={() => handleInviteResponse(notification._id, "reject")}
+                  >
+                    Reject
+                  </button>
+                </>
+              ) : (
                 <button
                   type="button"
-                  className="accept"
-                  onClick={() => handleInviteResponse(notification._id, "accept")}
+                  className="close"
+                  onClick={() => dismissNotification(notification._id)}
+                  title="Close notification"
                 >
-                  Accept
+                  ✕
                 </button>
-                <button
-                  type="button"
-                  className="reject"
-                  onClick={() => handleInviteResponse(notification._id, "reject")}
-                >
-                  Reject
-                </button>
-              </div>
-            ) : null}
+              )}
+            </div>
           </div>
         ))}
       </div>

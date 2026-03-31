@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import MessageBubble from "./MessageBubble";
 
 function ChatWindow({
@@ -12,7 +12,15 @@ function ChatWindow({
   onOpenShareNote,
   connected,
   membersText,
+  inviteEmail,
+  setInviteEmail,
+  onInviteMember,
+  onDeleteGroup,
+  onLeaveGroup,
+  isGroupCreator,
 }) {
+  const [showInvitePanel, setShowInvitePanel] = useState(false);
+
   if (!selectedGroup) {
     return (
       <section className="study-circle-chat-panel empty">
@@ -22,6 +30,11 @@ function ChatWindow({
     );
   }
 
+  const handleInvite = async () => {
+    await onInviteMember();
+    setInviteEmail("");
+  };
+
   return (
     <section className="study-circle-chat-panel">
       <header className="chat-header">
@@ -29,10 +42,64 @@ function ChatWindow({
           <h3>{selectedGroup.name}</h3>
           <p className="muted">{membersText}</p>
         </div>
-        <span className={`socket-status ${connected ? "online" : "offline"}`}>
-          {connected ? "Live" : "Reconnecting..."}
-        </span>
+        <div className="chat-header-actions">
+          <button
+            type="button"
+            className="secondary"
+            title="Invite members"
+            onClick={() => setShowInvitePanel(!showInvitePanel)}
+          >
+            👥 Invite
+          </button>
+          {isGroupCreator && (
+            <button
+              type="button"
+              className="danger"
+              title="Delete group"
+              onClick={onDeleteGroup}
+            >
+              🗑️ Delete
+            </button>
+          )}
+          <button
+            type="button"
+            className="secondary"
+            title="Leave group"
+            onClick={onLeaveGroup}
+          >
+            👋 Leave
+          </button>
+          <span className={`socket-status ${connected ? "online" : "offline"}`}>
+            {connected ? "Live" : "Reconnecting..."}
+          </span>
+        </div>
       </header>
+
+      {showInvitePanel && (
+        <div className="invite-panel">
+          <div className="invite-panel-content">
+            <h4>Invite Member</h4>
+            <div className="inline-form">
+              <input
+                type="email"
+                placeholder="Enter email address"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+              />
+              <button type="button" onClick={handleInvite} disabled={!isGroupCreator}>
+                Send Invite
+              </button>
+            </div>
+            <button
+              type="button"
+              className="secondary"
+              onClick={() => setShowInvitePanel(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="chat-messages">
         {loadingMessages ? <p className="muted">Loading messages...</p> : null}
