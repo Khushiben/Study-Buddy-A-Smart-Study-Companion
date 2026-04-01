@@ -96,17 +96,43 @@ const Dashboard = () => {
           <div className="card">
             <h3>📚 Flashcards</h3>
             <p>Make flashcards to help with last minute revision</p>
-            <button onClick={() => window.location.href = "/flashcards"}>
-              Go to Flashcards
-            </button>
+            <button onClick={() => navigate("/flashcards")} className="card-btn">Go to Flashcards</button>
           </div>
 
           <div className="card">
             <h3>📂 Upload Notes</h3>
             <p>Upload your notes and view them on the Notes page.</p>
-            <button onClick={() => window.location.href = "/notes"}>
-              Go to Notes
-            </button>
+            <button onClick={() => navigate("/notes")} className="card-btn">Go to Notes</button>
+          </div>
+
+          <div className="card">
+            <h3>👤 Profile</h3>
+            <p>View and manage your profile information</p>
+            <button onClick={() => navigate("/profile")} className="card-btn">View Profile</button>
+          </div>
+
+          <div className="card">
+            <h3>📝 Tasks</h3>
+            <p>View and organize all your study tasks</p>
+            <button onClick={() => navigate("/tasks")} className="card-btn">View Tasks</button>
+          </div>
+
+          <div className="card">
+            <h3>📅 Calendar</h3>
+            <p>Plan your study schedule with our calendar</p>
+            <button onClick={() => navigate("/calendar")} className="card-btn">Open Calendar</button>
+          </div>
+
+          <div className="card">
+            <h3>💬 Study Circle</h3>
+            <p>Connect and study with peers in real-time</p>
+            <button onClick={() => navigate("/study-circle")} className="card-btn">Join Study Circle</button>
+          </div>
+
+          <div className="card">
+            <h3>🧠 Learning Aptitude</h3>
+            <p>Practice your logical reasoning and problem solving</p>
+            <button onClick={() => navigate("/learning-aptitude")} className="card-btn">Practice Now</button>
           </div>
         </div>
 
@@ -123,7 +149,8 @@ const Dashboard = () => {
           <li>
             Use the <strong>Study Circle</strong> feature to connect and study with peers.
           </li>
-          <li>Review completed tasks and stay productive!</li>
+          <li>Practice and improve your logical reasoning and problem-solving skills through interactive aptitude quizzes.</li>
+          <li>Review your progress and stay motivated!</li>
         </ol>
       </Modal>
     </div>

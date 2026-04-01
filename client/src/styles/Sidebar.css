@@ -38,8 +38,89 @@
   text-decoration: none;
   display: block;
 }
+.sidebar ul li span {
+  white-space: nowrap;
+}
 
 .sidebar ul li.active,
 .sidebar ul li:hover {
   background: #1e40af;
+}
+
+.learning-aptitude-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.learning-aptitude-modal {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: min(90%, 420px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.learning-aptitude-modal h3 {
+  margin: 0 0 10px;
+}
+
+.learning-aptitude-modal button {
+  margin: 8px 6px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+}
+
+.learning-aptitude-modal button:hover {
+  background: #1e40af;
+}
+.sidebar-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 16px;
+
+  /* 🔥 Gradient Glass Effect */
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  backdrop-filter: blur(10px);
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.sidebar-header:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+}
+
+.sidebar-header img {
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  object-fit: cover;
+
+  /* 🔥 Glow */
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+}
+
+.sidebar-header h2 {
+  font-size: 18px;
+  color: white;
+  text-align: center;
+  margin: 0;
 }

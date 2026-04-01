@@ -44,7 +44,7 @@ function Home() {
 
         <div className="home-content">
           <div className="home-card fade-in delay-2">
-            <h2>Organize Your Tasks</h2>
+            <h2>📝 Organize Your Tasks</h2>
             <p>
               Keep track of your daily study tasks, timers, and progress all in
               one place.
@@ -52,7 +52,7 @@ function Home() {
           </div>
 
           <div className="home-card fade-in delay-3">
-            <h2>Flashcards & Notes</h2>
+            <h2>📚 Flashcards & Notes</h2>
             <p>
               Learn efficiently using interactive flashcards and save important
               notes for quick reference.
@@ -60,17 +60,37 @@ function Home() {
           </div>
 
           <div className="home-card fade-in delay-4">
-            <h2>Smart Calendar & Reminders</h2>
+            <h2>📅 Smart Calendar & Reminders</h2>
             <p>
               Stay on top of your deadlines with the built-in calendar! Add
-              important submission dates, project deadlines, or personal goals —
-              and get daily reminders to keep your studies on track.
+              important submission dates, project deadlines, or personal goals.
+            </p>
+          </div>
+
+          <div className="home-card fade-in delay-5">
+            <h2>👤 Your Profile</h2>
+            <p>
+              View and manage your profile information, achievements, and study statistics.
+            </p>
+          </div>
+
+          <div className="home-card fade-in delay-6">
+            <h2>💬 Study Circle</h2>
+            <p>
+              Connect and study with peers in real-time. Share notes, ask questions, and learn together!
+            </p>
+          </div>
+
+          <div className="home-card fade-in delay-6">
+            <h2>🧠 Learning Aptitude</h2>
+            <p>
+              Practice your logical reasoning and problem-solving skills with interactive quizzes.
             </p>
           </div>
         </div>
 
         <div
-          className="home-card fade-in delay-5"
+          className="home-card fade-in delay-7"
           style={{
             background: "linear-gradient(135deg, #f6df86ff, #f78fd3ff)",
             color: "#fff",
@@ -85,7 +105,7 @@ function Home() {
           </p>
         </div>
 
-        <div className="get-started fade-in delay-5" style={{ textAlign: "center" }}>
+        <div className="get-started fade-in delay-8" style={{ textAlign: "center" }}>
           <a href="/signup" className="btn-get-started">
             Get Started 🚀
           </a>

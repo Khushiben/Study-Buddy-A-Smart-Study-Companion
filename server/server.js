@@ -49,6 +49,15 @@ app.use("/api/notes", require("./routes/notes"));
 app.use("/api", require("./routes/progress"));
 app.use("/api/study-circle", require("./routes/studyCircle"));
 
-server.listen(5000, () => {
-  console.log("🚀 Server running on port 5000");
+const PORT = process.env.PORT || 5001;
+server.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
+
+server.on("error", (err) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(`❌ Port ${PORT} is already in use. Please stop the running process or set PORT to another value.`);
+    process.exit(1);
+  }
+  console.error(err);
 });

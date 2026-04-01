@@ -58,19 +58,6 @@ function GroupList({
         </div>
       </div>
 
-      <div className="study-circle-panel-block">
-        <h4>Join by Group ID</h4>
-        <div className="inline-form">
-          <input
-            value={joinGroupId}
-            onChange={(e) => setJoinGroupId(e.target.value)}
-            placeholder="Paste group id"
-          />
-          <button type="button" onClick={onJoinGroup}>
-            Join
-          </button>
-        </div>
-      </div>
     </aside>
   );
 }

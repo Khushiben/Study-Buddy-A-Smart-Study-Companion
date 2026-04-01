@@ -33,7 +33,6 @@ function StudyCircle() {
 
   const [createGroupName, setCreateGroupName] = useState("");
   const [inviteEmail, setInviteEmail] = useState("");
-  const [joinGroupId, setJoinGroupId] = useState("");
   const [messageText, setMessageText] = useState("");
   const [statusText, setStatusText] = useState("");
 
@@ -281,32 +280,7 @@ function StudyCircle() {
     }
   };
 
-  const onJoinGroup = async () => {
-    if (!joinGroupId.trim()) {
-      showStatus("Enter a group id");
-      return;
-    }
 
-    try {
-      const res = await axios.post(
-        `${API_BASE_URL}/api/study-circle/groups/${joinGroupId.trim()}/join`,
-        {},
-        authHeaders
-      );
-
-      setGroups((prev) => {
-        const exists = prev.some((group) => group._id === res.data._id);
-        return exists ? prev.map((g) => (g._id === res.data._id ? res.data : g)) : [res.data, ...prev];
-      });
-
-      setSelectedGroup(res.data);
-      setJoinGroupId("");
-      showStatus("Joined group");
-    } catch (error) {
-      if (handleAuthFailure(error)) return;
-      showStatus(error.response?.data?.message || "Failed to join group");
-    }
-  };
 
   const onSendMessage = (e) => {
     e.preventDefault();
@@ -420,9 +394,6 @@ function StudyCircle() {
             createGroupName={createGroupName}
             setCreateGroupName={setCreateGroupName}
             onCreateGroup={onCreateGroup}
-            joinGroupId={joinGroupId}
-            setJoinGroupId={setJoinGroupId}
-            onJoinGroup={onJoinGroup}
             loading={loadingGroups}
           />
 

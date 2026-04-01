@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/sidebar.css";
 
@@ -10,11 +10,12 @@ function Sidebar({ activePage, active }) {
   const menuItems = [
     { name: "Dashboard", icon: "📊", path: "/dashboard" },
     { name: "Profile", icon: "👤", path: "/profile" },
-    { name: "Tasks", icon: "📝", path: "/Tasks" },
+    { name: "Tasks", icon: "📝", path: "/tasks" },
     { name: "Flashcards", icon: "📚", path: "/flashcards" },
     { name: "Notes", icon: "📂", path: "/notes" },
     { name: "Calendar", icon: "👥", path: "/calendar" },
     { name: "Study Circle", icon: "💬", path: "/study-circle" },
+    { name: "Learning-Aptitude", icon: "🧠", path: "/learning-aptitude" },
     { name: "Logout", icon: "🚪" },
   ];
 
@@ -27,17 +28,24 @@ function Sidebar({ activePage, active }) {
 
   return (
     <aside className="sidebar">
-      <h2><u>Study-Buddy 📚💻</u></h2>
+
+<div className="sidebar-header">
+  <img src="/logo.jpg" alt="Study Buddy Logo" />
+  <h2>Study-Buddy 📚</h2>
+</div>
+
       <ul>
         {menuItems.map((item) => (
           <li
             key={item.name}
             className={currentActive === item.name ? "active" : ""}
-            onClick={() =>
-              item.name === "Logout"
-                ? handleLogout()
-                : navigate(item.path)
-            }
+            onClick={() => {
+              if (item.name === "Logout") {
+                handleLogout();
+              } else if (item.path) {
+                navigate(item.path);
+              }
+            }}
             style={{ cursor: "pointer" }}
           >
             <span style={{ color: "white", textDecoration: "none" }}>
@@ -46,6 +54,7 @@ function Sidebar({ activePage, active }) {
           </li>
         ))}
       </ul>
+
     </aside>
   );
 }

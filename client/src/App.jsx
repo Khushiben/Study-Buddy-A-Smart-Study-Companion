@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -13,6 +13,7 @@ import Calendar from "./pages/Calendar";
 import Notes from "./pages/Notes";
 import Profile from "./pages/Profile";
 import StudyCircle from "./pages/StudyCircle";
+import LearningAptitude from "./pages/LearningAptitude";
 
 function App() {
   return (
@@ -85,6 +86,26 @@ function App() {
         </ProtectedRoute>
       }
     />
+
+    <Route
+      path="/learning-aptitude"
+      element={
+        <ProtectedRoute>
+          <LearningAptitude />
+        </ProtectedRoute>
+      }
+    />
+
+    <Route
+      path="/learning-aptitude/:topic/:chapter?"
+      element={
+        <ProtectedRoute>
+          <LearningAptitude />
+        </ProtectedRoute>
+      }
+    />
+
+    <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>
 </BrowserRouter>
   );
