@@ -263,38 +263,52 @@ router.post("/invitations/:notificationId/respond", async (req, res) => {
     notification.status = "read";
     await notification.save();
 
-    // Send notification to inviter
-    const inviterNotificationType = action === "accept" ? "invitation_accepted" : "invitation_rejected";
-    const inviterNotificationText =
-      action === "accept"
-        ? `${notification.userId} accepted your invitation to join ${group.name}`
-        : `${notification.userId} rejected your invitation to join ${group.name}`;
-
-    const invitedUser = await User.findById(req.userId).select("name");
-    const inviterNotification = await Notification.create({
-      type: inviterNotificationType,
-      userId: notification.fromUser,
-      fromUser: req.userId,
-      groupId: group._id,
-      status: "pending",
-      text: `${invitedUser.name} ${action === "accept" ? "accepted your invitation to join" : "rejected your invitation to join"} ${group.name}`,
-    });
-
-    const io = req.app.get("io");
-    if (io) {
-      io.to(`user:${notification.fromUser.toString()}`).emit("studyCircle:newNotification", inviterNotification);
-    }
-
+    // Prepare response before socket operations (so errors don't affect response)
     const populatedGroup = await Group.findById(group._id)
       .populate("creator", "name email")
       .populate("members", "name email");
 
-    return res.json({
+    const responseData = {
       message: action === "accept" ? "Invitation accepted" : "Invitation rejected",
       group: action === "accept" ? populatedGroup : null,
-    });
+      success: true,
+    };
+
+    // Send notification to inviter with user's name
+    // Do this asynchronously so socket errors don't break the API response
+    (async () => {
+      try {
+        const invitedUser = await User.findById(req.userId).select("name");
+        const inviterNotificationType = action === "accept" ? "invitation_accepted" : "invitation_rejected";
+
+        const inviterNotification = await Notification.create({
+          type: inviterNotificationType,
+          userId: notification.fromUser,
+          fromUser: req.userId,
+          groupId: group._id,
+          status: "pending",
+          text: `${invitedUser.name} ${action === "accept" ? "accepted your invitation to join" : "rejected your invitation to join"} ${group.name}`,
+        });
+
+        // Populate the notification before emitting
+        const populatedInviterNotification = await Notification.findById(inviterNotification._id)
+          .populate("fromUser", "name email")
+          .populate("groupId", "name");
+
+        const io = req.app.get("io");
+        if (io) {
+          io.to(`user:${notification.fromUser.toString()}`).emit("studyCircle:newNotification", populatedInviterNotification);
+        }
+      } catch (socketError) {
+        console.error("Error notifying inviter:", socketError);
+        // Don't fail the response if socket notification fails
+      }
+    })();
+
+    return res.json(responseData);
   } catch (error) {
-    return res.status(500).json({ message: "Failed to respond to invitation" });
+    console.error("Error responding to invitation:", error);
+    return res.status(500).json({ message: "Failed to respond to invitation", error: process.env.NODE_ENV === "development" ? error.message : undefined });
   }
 });
 
