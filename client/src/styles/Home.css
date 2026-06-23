@@ -67,9 +67,22 @@
 /* Home content cards layout */
 .home-content {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 25px;
-  margin: 40px 0;
+  margin: 40px auto;
+  max-width: 1400px;
+}
+
+@media (max-width: 1024px) {
+  .home-content {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .home-content {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Card style */
@@ -143,7 +156,8 @@
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
+  overflow: hidden;
 }
 
 .icon {
@@ -181,6 +195,8 @@
 .delay-4 { animation-delay: 1.2s; }
 .delay-5 { animation-delay: 1.5s; }
 .delay-6 { animation-delay: 1.8s; }
+.delay-7 { animation-delay: 2.1s; }
+.delay-8 { animation-delay: 2.4s; }
 
 @keyframes fadeIn {
   to {
